@@ -193,7 +193,6 @@ inline fun EditText.bindNullableFloat(bond: MutableObservableProperty<Float?>, f
 @Suppress("NOTHING_TO_INLINE")
 inline fun EditText.bindNullableDouble(bond: MutableObservableProperty<Double?>, format: NumberFormat = NumberFormat.getNumberInstance()) {
     inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
-    val originalTextColor = this.textColors.defaultColor
     var value: Double? = null
     textChangedListener {
         onTextChanged { charSequence, start, before, count ->
@@ -214,7 +213,6 @@ inline fun EditText.bindNullableDouble(bond: MutableObservableProperty<Double?>,
                 }
             }
 
-            textColor = originalTextColor
             if (bond.value != value) {
                 bond.value = (value)
             }
