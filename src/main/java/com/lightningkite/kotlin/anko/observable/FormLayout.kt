@@ -54,6 +54,16 @@ class FormLayout(ctx: Context) : _LinearLayout(ctx) {
         }
     }
 
+    var makeTextFieldWithId: ViewGroup.(id: Int, hint: Int, editTextSetup: EditText.() -> Unit) -> View = { id, hint, editTextSetup ->
+        textInputLayout {
+            this.id = id
+            hintResource = hint
+            textInputEditText {
+                editTextSetup()
+            }
+        }
+    }
+
     var showFailure: View.(failure: String) -> Unit = {
         snackbar(it)
     }
@@ -180,8 +190,8 @@ class FormLayout(ctx: Context) : _LinearLayout(ctx) {
         }
     }
 
-    inline fun ViewGroup.fieldString(obs: MutableObservableProperty<String>, hint: Int, type: Int, crossinline setup: EditText.() -> Unit): View {
-        return makeTextField(hint) {
+    inline fun ViewGroup.fieldString(obs: MutableObservableProperty<String>, id: Int = -1, hint: Int, type: Int, crossinline setup: EditText.() -> Unit): View {
+        return makeTextFieldWithId(id, hint) {
             bindString(obs)
             inputType = type
             setup()
@@ -190,12 +200,13 @@ class FormLayout(ctx: Context) : _LinearLayout(ctx) {
 
     inline fun ViewGroup.fieldString(
             obs: MutableObservableProperty<String>,
+            id: Int,
             hint: Int,
             type: Int,
             validations: List<Pair<Int, (String) -> Boolean>> = listOf(),
             crossinline setup: EditText.() -> Unit
     ): View {
-        return makeTextField(hint) {
+        return makeTextFieldWithId(id, hint) {
             bindString(obs)
             inputType = type
             setup()
@@ -234,24 +245,27 @@ class FormLayout(ctx: Context) : _LinearLayout(ctx) {
 
     inline fun ViewGroup.fieldString(
             obs: MutableObservableProperty<String>,
+            id: Int,
             hint: Int,
             type: Int
     ): View {
-        return makeTextField(hint) {
+        return makeTextFieldWithId(id, hint) {
             bindString(obs)
             inputType = type
         }
     }
 
-    inline fun ViewGroup.fieldNonEmptyString(obs: MutableObservableProperty<String>, hint: Int, type: Int, blankError: Int) = fieldString(
+    inline fun ViewGroup.fieldNonEmptyString(obs: MutableObservableProperty<String>, id: Int = -1, hint: Int, type: Int, blankError: Int) = fieldString(
             obs,
+            id,
             hint,
             type,
             listOf(blankError to { it: String -> it.isBlank() })
     ) {}
 
-    inline fun ViewGroup.email(obs: MutableObservableProperty<String>, hint: Int, blankError: Int, notEmailError: Int) = fieldString(
+    inline fun ViewGroup.email(obs: MutableObservableProperty<String>, id: Int = -1, hint: Int, blankError: Int, notEmailError: Int) = fieldString(
             obs,
+            id,
             hint,
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS,
             {
@@ -264,8 +278,9 @@ class FormLayout(ctx: Context) : _LinearLayout(ctx) {
             }
     )
 
-    inline fun ViewGroup.password(obs: MutableObservableProperty<String>, hint: Int, blankError: Int) = fieldString(
+    inline fun ViewGroup.password(obs: MutableObservableProperty<String>, id: Int = -1, hint: Int, blankError: Int) = fieldString(
             obs,
+            id,
             hint,
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD,
             {
@@ -277,8 +292,9 @@ class FormLayout(ctx: Context) : _LinearLayout(ctx) {
             }
     )
 
-    inline fun ViewGroup.password(obs: MutableObservableProperty<String>, hint: Int, blankError: Int, minLength: Int, tooShortError: Int) = fieldString(
+    inline fun ViewGroup.password(obs: MutableObservableProperty<String>, id: Int = -1, hint: Int, blankError: Int, minLength: Int, tooShortError: Int) = fieldString(
             obs,
+            id,
             hint,
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD,
             {
@@ -291,8 +307,9 @@ class FormLayout(ctx: Context) : _LinearLayout(ctx) {
             }
     )
 
-    inline fun ViewGroup.confirmPassword(password: MutableObservableProperty<String>, confirm: MutableObservableProperty<String>, hint: Int, blankError: Int, notMatchingError: Int) = fieldString(
+    inline fun ViewGroup.confirmPassword(password: MutableObservableProperty<String>, confirm: MutableObservableProperty<String>, id: Int = -1, hint: Int, blankError: Int, notMatchingError: Int) = fieldString(
             confirm,
+            id,
             hint,
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD,
             {
