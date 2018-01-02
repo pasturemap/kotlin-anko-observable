@@ -20,17 +20,17 @@ import java.text.ParseException
  * When the value of the bond changes, the text here will be updated.
  */
 @Suppress("NOTHING_TO_INLINE")
-inline fun EditText.bindString(bond: MutableObservableProperty<String>) {
-    setText(bond.value)
+inline fun EditText.bindString(bond: MutableObservableProperty<String?>) {
+    setText(bond.value ?: "")
     textChangedListener {
         onTextChanged { charSequence, start, before, count ->
-            if (bond.value != charSequence) {
+            if (bond.value != charSequence && charSequence != null) {
                 bond.value = (charSequence.toString())
             }
         }
     }
     lifecycle.bind(bond) {
-        if (bond.value != text.toString()) {
+        if (bond.value != null && bond.value != text.toString()) {
             this.setText(bond.value)
         }
     }
