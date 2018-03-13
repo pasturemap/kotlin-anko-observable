@@ -48,7 +48,7 @@ open class ListRecyclerViewAdapter<T>(
 
     var default: T? = null
     var shouldSetDefault = true
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder<T>? {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder<T> {
         if (shouldSetDefault) {
             default = list.first()
             shouldSetDefault = false
